@@ -1,0 +1,267 @@
+
+version: 2
+
+models:
+
+  # =========================
+  # DIMENSION CUSTOMERS
+  # =========================
+  - name: dim_customers
+    description: "Dimension des clients"
+
+    columns:
+      - name: customer_key
+        description: "Cle technique du client"
+        data_tests:
+          - not_null
+          - unique
+
+      - name: customer_id
+        data_tests:
+          - not_null
+          - unique
+
+  # =========================
+  # DIMENSION PRODUCTS
+  # =========================
+  - name: dim_products
+    description: "Dimension des produits"
+
+    columns:
+      - name: product_key
+        data_tests:
+          - not_null
+          - unique
+
+      - name: product_id
+        data_tests:
+          - not_null
+          - unique
+
+  # =========================
+  # DIMENSION SELLERS
+  # =========================
+  - name: dim_sellers
+    description: "Dimension des vendeurs"
+
+    columns:
+      - name: seller_key
+        data_tests:
+          - not_null
+          - unique
+
+      - name: seller_id
+        data_tests:
+          - not_null
+          - unique
+
+  # =========================
+  # DIMENSION DATE
+  # =========================
+  - name: dim_date
+    description: "Dimension calendrier"
+
+    columns:
+      - name: date_key
+        data_tests:
+          - not_null
+          - unique
+
+      - name: full_date
+        data_tests:
+          - not_null
+          - unique
+
+  # =========================
+  # FACT ORDER ITEMS
+  # =========================
+  - name: fact_order_items
+    description: "Table de faits : une ligne par article de commande"
+
+    columns:
+      - name: order_id
+        data_tests:
+          - not_null
+
+      - name: order_item_id
+        data_tests:
+          - not_null
+
+      - name: customer_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_customers')
+                field: customer_key
+
+      - name: product_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_products')
+                field: product_key
+
+      - name: seller_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_sellers')
+                field: seller_key
+
+      - name: purchase_date_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+
+      - name: approved_date_key
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+
+      - name: carrier_delivery_date_key
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+
+      - name: customer_delivery_date_key
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+
+      - name: estimated_delivery_date_key
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+
+      - name: order_status
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - approved
+                  - canceled
+                  - delivered
+                  - invoiced
+                  - processing
+                  - shipped
+                  - unavailable
+
+      - name: price
+        data_tests:
+          - not_null
+
+      - name: freight_value
+        data_tests:
+          - not_null
+
+      - name: total_item_amount
+        data_tests:
+          - not_null
+
+  # =========================
+  # AGG MONTHLY SALES
+  # =========================
+  - name: agg_monthly_sales
+    columns:
+      - name: order_month
+        data_tests:
+          - not_null
+          - unique
+
+      - name: nb_orders
+        data_tests:
+          - not_null
+
+      - name: nb_items
+        data_tests:
+          - not_null
+
+      - name: revenue
+        data_tests:
+          - not_null
+
+      - name: freight
+        data_tests:
+          - not_null
+
+      - name: total_revenue
+        data_tests:
+          - not_null
+
+  # =========================
+  # AGG ORDERS BY STATUS
+  # =========================
+  - name: agg_orders_by_status
+    columns:
+      - name: order_status
+        data_tests:
+          - not_null
+          - unique
+          - accepted_values:
+              arguments:
+                values:
+                  - approved
+                  - canceled
+                  - delivered
+                  - invoiced
+                  - processing
+                  - shipped
+                  - unavailable
+
+      - name: nb_orders
+        data_tests:
+          - not_null
+
+      - name: nb_items
+        data_tests:
+          - not_null
+
+  # =========================
+  # AGG TOP PRODUCTS
+  # =========================
+  - name: agg_top_products
+    columns:
+      - name: product_key
+        data_tests:
+          - not_null
+          - unique
+
+      - name: product_id
+        data_tests:
+          - not_null
+          - unique
+
+      - name: nb_items
+        data_tests:
+          - not_null
+
+      - name: nb_orders
+        data_tests:
+          - not_null
+
+      - name: revenue
+        data_tests:
+          - not_null
+
+      - name: freight
+        data_tests:
+          - not_null
+
+      - name: total_revenue
+        data_tests:
+          - not_null

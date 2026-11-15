@@ -1,0 +1,9 @@
+pandas
+pyarrow
+sqlalchemy
+psycopg2-binary
+pytest
+pyspark>=3.5,<3.6
+confluent-kafka>=2.12,<3
+jsonschema[format]>=4.23,<5
+python-dotenv>=1.0,<2

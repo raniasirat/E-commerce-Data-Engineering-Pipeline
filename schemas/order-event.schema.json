@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Olist order snapshot event",
+  "description": "Contrat v1.0 des instantanés de commande publiés dans orders.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "event_id",
+    "event_type",
+    "event_timestamp",
+    "order_id",
+    "customer_id",
+    "order_status",
+    "order_purchase_timestamp",
+    "order_approved_at",
+    "order_delivered_carrier_date",
+    "order_delivered_customer_date",
+    "order_estimated_delivery_date",
+    "order_amount",
+    "currency"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "event_id": {
+      "type": "string",
+      "pattern": "^olist:order\\.snapshot:v1:.+$"
+    },
+    "event_type": {
+      "const": "order.snapshot"
+    },
+    "event_timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "order_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "customer_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "order_status": {
+      "type": "string",
+      "minLength": 1
+    },
+    "order_purchase_timestamp": {
+      "type": "string",
+      "minLength": 1
+    },
+    "order_approved_at": {
+      "type": ["string", "null"],
+      "minLength": 1
+    },
+    "order_delivered_carrier_date": {
+      "type": ["string", "null"],
+      "minLength": 1
+    },
+    "order_delivered_customer_date": {
+      "type": ["string", "null"],
+      "minLength": 1
+    },
+    "order_estimated_delivery_date": {
+      "type": ["string", "null"],
+      "minLength": 1
+    },
+    "order_amount": {
+      "type": ["number", "null"],
+      "minimum": 0,
+      "multipleOf": 0.01
+    },
+    "currency": {
+      "const": "BRL"
+    }
+  }
+}

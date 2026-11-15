@@ -1,0 +1,10 @@
+
+services:
+  web-test:
+    image: nginx:alpine
+    container_name: ecommerce-web-test
+    ports:
+      - "8080:80"
+    volumes:
+      - ./docs/test-site:/usr/share/nginx/html:ro
+    restart: unless-stopped

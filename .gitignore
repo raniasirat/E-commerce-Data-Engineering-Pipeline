@@ -1,0 +1,17 @@
+venv/
+__pycache__/
+*.pyc
+.env
+.ipynb_checkpoints/
+data/processed/*
+data/curated/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/curated/.gitkeep
+logs/
+*.log
+hs_err_pid*.log
+.pytest_cache/
+data/checkpoints/
+config/airflow.cfg
+ecommerce_dbt/target/
