@@ -19,13 +19,13 @@ Building a complete data platform to ingest, process, transform, store, and anal
 
 ---
 
-## 📌 Project Overview
+##  Project Overview
 
 This project implements an end-to-end E-commerce Data Engineering Platform based on the public Brazilian Olist dataset.
 
 It combines independent batch and streaming pipelines to transform raw e-commerce data into structured analytical datasets and business insights.
 
-### 🎯 Main objectives
+###  Main objectives
 
 - Build reliable batch and real-time data ingestion pipelines.
 - Process and transform large datasets using Python and Spark.
@@ -34,7 +34,7 @@ It combines independent batch and streaming pipelines to transform raw e-commerc
 - Build a dimensional data warehouse using PostgreSQL and dbt.
 - Create analytical dashboards with Power BI.
 
-## 🏗️ Architecture
+##  Architecture
 
 The platform contains two independent data processing paths and a separate analytics workflow.
 
@@ -61,7 +61,7 @@ flowchart TD
 
 > **Note:** The Airflow DAG orchestrates the batch workflow only. The Kafka-to-MinIO streaming pipeline, PostgreSQL loader, and dbt transformations are separate execution paths.
 
-## ⚙️ Technology Stack
+##  Technology Stack
 
 | Component | Technology | Purpose |
 |---|---|---|
@@ -76,7 +76,7 @@ flowchart TD
 | Visualization | Power BI | Business intelligence |
 | Infrastructure | Docker Compose | Service deployment |
 
-## 🔄 Data Pipelines
+##  Data Pipelines
 
 ### 1. Batch Data Pipeline
 
@@ -104,7 +104,7 @@ The batch workflow is manually triggered through Airflow.
 - Build dimensions, facts, and aggregate models.
 - Connect Power BI to the analytics tables.
 
-## 🗄️ Data Warehouse
+##  Data Warehouse
 
 The analytical warehouse includes:
 
@@ -119,7 +119,7 @@ The analytical warehouse includes:
 
 The dimensional model supports analytical queries related to customers, products, sellers, orders, revenue, and delivery performance.
 
-## 📊 Power BI Dashboard
+##  Power BI Dashboard
 
 The Power BI report provides an overview of e-commerce performance through KPIs and analytical charts.
 
@@ -133,9 +133,9 @@ Key indicators include:
 - Monthly Freight Cost Trend
 - Top 10 Product Categories by Revenue
 
-📁 **Dashboard file:** [`powerbi/dashbord_ecommerce.pbix`](powerbi/dashbord_ecommerce.pbix)
+ **Dashboard file:** [`powerbi/dashbord_ecommerce.pbix`](powerbi/dashbord_ecommerce.pbix)
 
-## 📈 Recorded Project Results
+##  Recorded Project Results
 
 | Metric | Recorded result |
 |---|---:|
@@ -151,7 +151,7 @@ Key indicators include:
 
 **Data quality note:** The read-only streaming validation identified one invalid JSON value and seven repeated event groups. These anomalies have not been corrected. The dbt test results apply to the dbt project, not to the independent streaming pipeline. See [`docs/data-quality.md`](docs/data-quality.md).
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### Prerequisites
 
@@ -220,7 +220,7 @@ dbt run
 dbt test
 ```
 
-## 📁 Repository Structure
+##  Repository Structure
 
 ```text
 ecommerce-data-platform/
@@ -248,7 +248,7 @@ ecommerce-data-platform/
 └── README.md
 ```
 
-## 📚 Documentation
+##  Documentation
 
 For more details, explore:
 
@@ -259,7 +259,7 @@ For more details, explore:
 - [Power BI Dashboard](docs/powerbi-dashboard.md)
 - [Kafka Reference](docs/kafka-reference.md)
 
-## 👩‍💻 Author
+## 👩‍💻Author
 
 **Rania Sirat**
 
