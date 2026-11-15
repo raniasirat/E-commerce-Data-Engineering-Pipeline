@@ -1,56 +1,168 @@
-# E-commerce Data Platform — Olist
+# 🛒 E-commerce Data Engineering Platform
 
-A data-engineering project for preparing, processing, and analysing the public
-Brazilian Olist e-commerce dataset. It combines independent batch and event
-streaming paths and publishes a dbt dimensional model for analytics.
+### End-to-End Data Engineering Pipeline | Olist Brazilian E-commerce Dataset
 
-## What is implemented
+Building a complete data platform to ingest, process, transform, store, and analyze e-commerce data using modern Data Engineering technologies.
 
-- Pandas batch ETL: Olist CSV files in `data/raw/` are standardized, cleaned,
-  deduplicated by configured business keys, and written as Parquet under
-  `data/processed/`.
-- A manually triggered Airflow DAG runs the file check, Pandas ETL, Spark batch
-  pipeline, and output validation in that order.
-- A separate Kafka producer publishes validated `order.snapshot` messages to
-  the `orders` topic. Spark Structured Streaming parses those messages and
-  writes Parquet to the S3-compatible SILO/MinIO service.
-- A PostgreSQL staging loader and dbt models build an analytics star schema
-  and three aggregate tables.
-- The Power BI report file is in `powerbi/`.
+<p align="center">
+  <img src="docs/images/Power%20BI%20dashboard.png" alt="E-commerce Power BI Dashboard" width="850"/>
+</p>
 
-The Airflow DAG does **not** orchestrate the Kafka-to-MinIO stream, the
-PostgreSQL loader, or dbt. These are separate execution paths.
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.11-blue?logo=python" alt="Python"/>
+  <img src="https://img.shields.io/badge/Apache%20Kafka-Streaming-black?logo=apachekafka" alt="Kafka"/>
+  <img src="https://img.shields.io/badge/Apache%20Spark-3.5.9-orange?logo=apachespark" alt="Spark"/>
+  <img src="https://img.shields.io/badge/Apache%20Airflow-Orchestration-017CEE?logo=apacheairflow" alt="Airflow"/>
+  <img src="https://img.shields.io/badge/dbt-Data%20Transformation-FF694B?logo=dbt" alt="dbt"/>
+  <img src="https://img.shields.io/badge/Power%20BI-Analytics-F2C811?logo=powerbi" alt="Power BI"/>
+</p>
 
-## Technology
+---
 
-| Area | Technology in the project |
-|---|---|
-| Batch processing | Python, Pandas, PySpark, Parquet |
-| Orchestration | Apache Airflow |
-| Event transport | Apache Kafka 4 in KRaft mode |
-| Streaming | Spark Structured Streaming |
-| Object storage | SILO/MinIO-compatible S3 API |
-| Warehouse | PostgreSQL |
-| Transformations | dbt Core with the PostgreSQL adapter |
-| Reporting | Power BI Desktop (`.pbix`) |
+## 📌 Project Overview
 
-The Compose stack also defines Redis for Airflow's Celery executor. The custom
-Airflow image is based on Airflow 3.4 with Python 3.11 and installs a Java
-runtime for Spark.
+This project implements an end-to-end E-commerce Data Engineering Platform based on the public Brazilian Olist dataset.
 
-## Prerequisites
+It combines independent batch and streaming pipelines to transform raw e-commerce data into structured analytical datasets and business insights.
 
-- Windows with Docker Desktop and Docker Compose.
-- Python compatible with the code and packages in `requirements.txt`.
-- Java when running Spark locally; the custom Airflow image includes a Java
-  runtime.
-- The nine Olist CSV source files in `data/raw/`.
-- dbt Core and the PostgreSQL adapter in the environment used to run dbt. dbt
-  is not pinned in the root `requirements.txt`.
+### 🎯 Main objectives
 
-## Local setup (Windows CMD)
+- Build reliable batch and real-time data ingestion pipelines.
+- Process and transform large datasets using Python and Spark.
+- Orchestrate batch workflows with Apache Airflow.
+- Store streaming data in MinIO using Parquet format.
+- Build a dimensional data warehouse using PostgreSQL and dbt.
+- Create analytical dashboards with Power BI.
 
-Run these commands from the repository root:
+## 🏗️ Architecture
+
+The platform contains two independent data processing paths and a separate analytics workflow.
+
+```mermaid
+flowchart TD
+    A[Olist CSV Dataset] --> B[Pandas ETL]
+    B --> C[Processed Parquet]
+    C --> D[PySpark Batch]
+    D --> E[Output Validation]
+
+    F[Apache Airflow] -. Orchestrates .-> B
+    F -. Orchestrates .-> D
+
+    G[Kafka Producer] --> H[Apache Kafka]
+    H --> I[Spark Structured Streaming]
+    I --> J[MinIO Object Storage]
+    J --> K[Streaming Parquet]
+
+    C --> L[PostgreSQL Staging]
+    L --> M[dbt Transformations]
+    M --> N[Data Warehouse]
+    N --> O[Power BI Dashboard]
+```
+
+> **Note:** The Airflow DAG orchestrates the batch workflow only. The Kafka-to-MinIO streaming pipeline, PostgreSQL loader, and dbt transformations are separate execution paths.
+
+## ⚙️ Technology Stack
+
+| Component | Technology | Purpose |
+|---|---|---|
+| Programming | Python, Pandas | Data ingestion and cleaning |
+| Batch processing | Apache Spark | Distributed data processing |
+| Streaming | Apache Kafka | Event transportation |
+| Stream processing | Spark Structured Streaming | Real-time processing |
+| Object storage | MinIO | Parquet storage |
+| Orchestration | Apache Airflow | Batch workflow orchestration |
+| Data warehouse | PostgreSQL | Analytical storage |
+| Transformation | dbt Core | Data modeling |
+| Visualization | Power BI | Business intelligence |
+| Infrastructure | Docker Compose | Service deployment |
+
+## 🔄 Data Pipelines
+
+### 1. Batch Data Pipeline
+
+- Read the nine original Olist CSV datasets.
+- Validate source files.
+- Clean, standardize, and deduplicate records using Pandas.
+- Generate processed Parquet datasets.
+- Apply Spark batch transformations.
+- Validate the generated outputs.
+
+The batch workflow is manually triggered through Airflow.
+
+### 2. Kafka Streaming Pipeline
+
+- Produce validated order snapshot events.
+- Publish events to the Kafka `orders` topic.
+- Process incoming messages with Spark Structured Streaming.
+- Write Parquet files to MinIO.
+- Maintain streaming progress through Spark checkpoints.
+
+### 3. Data Warehouse & Analytics
+
+- Load processed datasets into PostgreSQL staging tables.
+- Transform data with dbt.
+- Build dimensions, facts, and aggregate models.
+- Connect Power BI to the analytics tables.
+
+## 🗄️ Data Warehouse
+
+The analytical warehouse includes:
+
+- 9 staging tables
+- 4 dimension tables
+- 1 fact table
+- 3 aggregate tables
+
+<p align="center">
+  <img src="docs/images/data_warehouse_schema.png" alt="Data Warehouse Schema" width="850"/>
+</p>
+
+The dimensional model supports analytical queries related to customers, products, sellers, orders, revenue, and delivery performance.
+
+## 📊 Power BI Dashboard
+
+The Power BI report provides an overview of e-commerce performance through KPIs and analytical charts.
+
+Key indicators include:
+
+- Total Revenue
+- Total Orders
+- Orders by Status
+- Monthly Orders Trend
+- Monthly Revenue Trend
+- Monthly Freight Cost Trend
+- Top 10 Product Categories by Revenue
+
+📁 **Dashboard file:** [`powerbi/dashbord_ecommerce.pbix`](powerbi/dashbord_ecommerce.pbix)
+
+## 📈 Recorded Project Results
+
+| Metric | Recorded result |
+|---|---:|
+| Rows in PostgreSQL staging | 1,289,091 |
+| Order items | 112,650 |
+| Distinct orders | 98,666 |
+| dbt models | 19 |
+| dbt tests passed | 59 |
+| dbt warnings | 0 |
+| dbt errors | 0 |
+| Streaming Parquet files | 781 |
+| Streaming records | 78,056 |
+
+**Data quality note:** The read-only streaming validation identified one invalid JSON value and seven repeated event groups. These anomalies have not been corrected. The dbt test results apply to the dbt project, not to the independent streaming pipeline. See [`docs/data-quality.md`](docs/data-quality.md).
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Windows and Docker Desktop
+- Docker Compose
+- Python 3.11
+- Java for local Spark execution
+- The nine Olist CSV source datasets
+- dbt Core with the PostgreSQL adapter
+
+### Installation
 
 ```cmd
 py -3.11 -m venv venv
@@ -60,68 +172,34 @@ python -m pip install -r requirements.txt
 copy .env.example .env
 ```
 
-Populate the local `.env` with the required environment-specific settings.
-Keep that file private; do not commit it. The example file contains no usable
-credentials. Configure the dbt profile separately and keep its credentials
-private as well.
+Configure your local `.env` file and dbt profile. Never commit real credentials.
 
-Place the source CSVs in `data/raw/`. Their expected filenames and table keys
-are defined in `src/processing/config.py`.
-
-## Starting the local services
-
-From the repository root, in CMD:
+### Start services
 
 ```cmd
 docker compose up -d --build
 docker compose ps
 ```
 
-The Compose file exposes Kafka on port `9092`, the Airflow API/UI on port
-`8081`, SILO/MinIO on ports `9000` and `9001`, and its PostgreSQL service on
-host port `5433`. Airflow is available at `http://localhost:8081`; use the
-locally configured Airflow web-account credentials.
+### Run the batch pipeline
 
-The Kafka topic is not created by the batch DAG. Create it when needed:
+Trigger the `olist_batch_pipeline` DAG manually through the Airflow UI.
 
-```cmd
-docker compose exec kafka /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --create --if-not-exists --topic orders --partitions 1 --replication-factor 1
-```
-
-## Running the pipelines
-
-### Batch path
-
-The Airflow DAG `olist_batch_pipeline` has no schedule and is intended to be
-triggered manually in the Airflow UI. Its tasks are:
+The DAG tasks execute in this order:
 
 ```text
-check_files -> ingest_data -> transform_data -> validate_output
+check_files
+    ↓
+ingest_data
+    ↓
+transform_data
+    ↓
+validate_output
 ```
 
-For local execution of individual steps:
+### Run the streaming pipeline
 
-```cmd
-python -m src.utils.check_files
-python -m src.ingestion.etl_pipeline
-python -m src.processing.olist_spark_pipeline
-python -m src.utils.validate_output
-```
-
-The separate PostgreSQL loader is:
-
-```cmd
-python -m src.processing.load_parquet_to_postgres
-```
-
-Review that script and its target before running it: it truncates each target
-staging table before inserting the processed Parquet rows. It is not a task in
-the current Airflow DAG.
-
-### Kafka and streaming path
-
-With the services running and the `orders` topic available, run the producer
-and Spark streaming application from separate CMD windows:
+In separate CMD windows:
 
 ```cmd
 python -m src.ingestion.kafka_producer
@@ -131,66 +209,64 @@ python -m src.ingestion.kafka_producer
 python -m src.processing.kafka_spark_to_minio
 ```
 
-The producer validates its event payload against
-`schemas/order-event.schema.json`. The Spark application writes under
-`s3a://ecommerce-data/orders/` and uses the local checkpoint under
-`data/checkpoints/kafka_spark_streaming/orders_parquet_minio`. The checkpoint
-is part of the stream's progress state; do not delete it to force a replay.
+### Run dbt
 
-`src/processing/kafka_spark_streaming.py` is a separate console-output
-Structured Streaming utility. It is not the MinIO sink.
-
-### dbt and Power BI
-
-Run dbt commands from the actual project directory, `ecommerce_dbt`:
+From the `ecommerce_dbt` directory:
 
 ```cmd
-cd /d ecommerce_dbt
 dbt debug
 dbt parse
 dbt run
 dbt test
-dbt docs generate
-dbt docs serve --port 8080
 ```
 
-The Power BI report file is
-[`powerbi/dashbord_ecommerce.pbix`](powerbi/dashbord_ecommerce.pbix). Its
-visual metadata references the `analytics.agg_*` tables; see
-[`docs/powerbi-dashboard.md`](docs/powerbi-dashboard.md).
-
-## Recorded results and data-quality notes
-
-The existing warehouse documentation records 1,289,091 rows across the nine
-staging tables and these batch aggregates: 24 order months, 112,650 order
-items, 98,666 distinct orders, `revenue` of 13,591,643.70, and freight of
-2,251,909.54 (source-currency amounts).
-
-A separate read-only scan of the Kafka-to-MinIO output found 781 readable
-Parquet files and 78,056 rows with one consistent schema. It also found one
-invalid JSON value and seven repeated `event_id`/`order_id` groups. These
-streaming anomalies have **not** been corrected. See
-[`docs/data-quality.md`](docs/data-quality.md) for scope and caveats.
-
-The project records a dbt test run with 59 passes, 0 warnings, and 0 errors.
-That result does not validate the separate Kafka-to-MinIO stream.
-
-## Repository map
+## 📁 Repository Structure
 
 ```text
-data/raw/                 Olist CSV inputs
-data/processed/           Pandas Parquet and rejected duplicate rows
-data/processed/spark/     Spark batch Parquet and aggregates
-src/ingestion/            Batch ETL, Kafka producer, Kafka consumer
-src/processing/           Cleaning, batch Spark, streaming, PostgreSQL loader
-schemas/                  Kafka order-event JSON Schema
-dags/                     Airflow batch DAG
-ecommerce_dbt/            dbt sources, models, tests, and project config
-powerbi/                  Power BI report
-docs/                     Technical and project documentation
+ecommerce-data-platform/
+│
+├── data/
+│   ├── raw/                 # Original Olist CSV datasets
+│   ├── processed/           # Processed Parquet files
+│   ├── curated/             # Curated data
+│   └── checkpoints/         # Spark streaming checkpoints
+│
+├── src/
+│   ├── ingestion/            # Batch ETL and Kafka producer/consumer
+│   ├── processing/           # Spark, cleaning and data loading
+│   └── utils/                # Validation and utilities
+│
+├── dags/                     # Airflow DAGs
+├── ecommerce_dbt/            # dbt project and models
+├── schemas/                  # Kafka JSON schema
+├── powerbi/                  # Power BI report
+├── docs/                     # Technical documentation and images
+│
+├── docker-compose.yaml
+├── Dockerfile
+├── requirements.txt
+└── README.md
 ```
 
-See [`docs/architecture.md`](docs/architecture.md),
-[`docs/data-pipeline.md`](docs/data-pipeline.md),
-[`docs/data-quality.md`](docs/data-quality.md), and
-[`docs/powerbi-dashboard.md`](docs/powerbi-dashboard.md) for details.
+## 📚 Documentation
+
+For more details, explore:
+
+- [Architecture](docs/architecture.md)
+- [Data Pipeline](docs/data-pipeline.md)
+- [Data Quality](docs/data-quality.md)
+- [Data Warehouse](docs/data_warehouse_technical.md)
+- [Power BI Dashboard](docs/powerbi-dashboard.md)
+- [Kafka Reference](docs/kafka-reference.md)
+
+## 👩‍💻 Author
+
+**Rania Sirat**
+
+Data Engineering Project | E-commerce Analytics
+
+---
+
+<p align="center">
+  ⭐ If you find this project interesting, feel free to explore the repository!
+</p>
